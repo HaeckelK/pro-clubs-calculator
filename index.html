@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Pro Clubs Calculator</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    p, input { font-family: monospace; }
+    p { white-space: pre; }
+  </style>
+</head>
+<body>
+  <h1>G + A Ratio Calculator  </h1>
+  <div id="app">
+    <p>Matches Played <input v-model="matchesPlayed"></p>
+    <p>Current Ratio <input v-model="currentRatio"></p>
+    <p>(Current Goals + Assists: <span v-text="goalAssists"></span>)</p>
+    <p>Target Ratio <input v-model="targetRatio"></p>
+    <p>In How Many Matches <input v-model="newMatches"></p>
+    <p>------------------------------------------</p>
+    <p>Required Rate = <span v-text="result"></span></p>
+    <p>(Required Goals + Assists: <span v-text="newGoalAssists"></span>)</p>
+  </div>
+
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script type="text/javascript">
+  function isNotNumericValue(value) {
+    return isNaN(value) || !isFinite(value);
+  }
+    var app = new Vue({
+      el: '#app',
+      data: { matchesPlayed: 0,
+              newMatches: 50,
+              goalAssists: 0,
+              newGoalAssists: 0,
+              currentRatio: 0,
+              targetRatio: 1.0,
+              requiredRatio: 0 },
+      computed: {
+        result: function() {
+            let matchesPlayed = parseFloat(this.matchesPlayed);
+            if(isNotNumericValue(matchesPlayed))
+              return this.requiredRatio;
+
+            let currentRatio = parseFloat(this.currentRatio);
+            if(isNotNumericValue(currentRatio))
+              return this.requiredRatio;
+
+            let targetRatio = parseFloat(this.targetRatio);
+            if(isNotNumericValue(targetRatio))
+              return this.requiredRatio;
+
+            let newMatches = parseFloat(this.newMatches);
+            if(isNotNumericValue(newMatches))
+              return this.requiredRatio;
+
+            this.goalAssists = (matchesPlayed * currentRatio).toFixed(0);
+
+            this.newGoalAssists = (((matchesPlayed + newMatches) * targetRatio) - this.goalAssists).toFixed(0);
+            this.requiredRatio = (this.newGoalAssists / newMatches).toFixed(2);
+
+            return this.requiredRatio;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
